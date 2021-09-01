@@ -4,46 +4,52 @@ using UnityEngine;
 
 public class ColorChangeTest : MonoBehaviour
 {
-    public int cols = 20;
-    public int x1 = 5;
-    public int y1 = 5;
+    public int pixels;
+    public int correctPixels;
+    public int cols = 100;
+    public int r = 10;
+    public bool continuous = false;
+    public float rate = 5.0f;
+
+    private float rateoffire;
 
     private GameObject _plane;
     public Camera _cam;
     Texture2D texture;
     public Color drawColor;
+
     void Start()
     {
         _plane = gameObject ;
-       texture = new Texture2D(cols, cols);
+        texture = new Texture2D(cols, cols);
         GetComponent<Renderer>().material.mainTexture = texture;
-
-
-
+        rateoffire = 1 / rate;
+        pixels = cols * cols;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void calcCorrectPixels()
     {
-        float scale = 256.0f / cols;
-
-        //for (int y = 0; y < texture.height; y++)
+        var pxls = texture.GetPixels32();
+        Debug.Log(pxls.Length);
+        Debug.Log(pxls[0]);
+        correctPixels = 0;
+        for(int i = 0; i < pxls.Length; i++)
+        {
+            if (pxls[i].r > 250)
+                correctPixels++;
+        }
+        //for(int i =0; i < texture.width; i++)
         //{
-        //    for (int x = 0; x < texture.width; x++)
+        //    for(int j = 0; j <texture.height; j++)
         //    {
-        //        //Color color = ((x & y) != 0 ? Color.white : Color.gray);
-        //        //texture.SetPixel(x, y, color);
-        //        Color color = new Color(0, 0, 0);
-        //        texture.SetPixel(x, y, color);
+        //        if(texture.GetPixel(i,j).r > 0.9f)
+        //        {
+        //            correctPixels++;
+        //        }
         //    }
         //}
-
-        texture.SetPixel(1, 1, Color.white);
-        texture.SetPixel(1, 2, Color.white);
-
-        texture.SetPixel(x1, y1, Color.white);
-
-
+    }
+    public void FireGun()
+    {
         Vector3 mousePosition = Input.mousePosition;
         Ray screenPosition = _cam.ScreenPointToRay(mousePosition);
         if (!_plane.GetComponent<Collider>().Raycast(screenPosition, out RaycastHit hit, 1000))
@@ -59,12 +65,10 @@ public class ColorChangeTest : MonoBehaviour
         float xPoint = xProportion * texture.width;
         float yPoint = yProportion * texture.height;
         Vector2 startPosition = new Vector2(xPoint, yPoint);
-
-        Debug.Log(startPosition);
-        int r = 15;
+        
         for (int x = -r; x < r; x++)
         {
-            for (int y = -r; y < r; y++)
+            for (int y = -r/2; y < r/2; y++)
             {
                 int xcord = texture.width - Mathf.RoundToInt(xPoint) + x;
                 int ycord = texture.height - Mathf.RoundToInt(yPoint) + y;
@@ -74,5 +78,25 @@ public class ColorChangeTest : MonoBehaviour
         }
 
         texture.Apply();
+        calcCorrectPixels();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (continuous)
+        {
+            if (rateoffire <= 0 && Input.GetMouseButton(0))
+            {
+                FireGun();
+                rateoffire = 1 / rate;
+            }
+            else
+                rateoffire -= Time.deltaTime;
+        }else
+        {
+            if (Input.GetMouseButtonDown(0))
+                FireGun();
+        }
     }
 }
