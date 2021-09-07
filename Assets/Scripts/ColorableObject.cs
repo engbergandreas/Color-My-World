@@ -30,8 +30,15 @@ public class ColorableObject : MonoBehaviour
         int r = 15;
         for (int i = x - r; i < x + r; i++)
         {
+            //values outside texture width 
+            if (i < 0 || i >= texture.width)
+                continue;
+
             for (int j = y - r; j < y + r; j++)
             {
+                if (j < 0 || j >= texture.height)
+                    continue;
+
                 Color currentColor = texture.GetPixel(i,j);
                 texture.SetPixel(i, j, Color.Lerp(currentColor, color, 0.5f));
             }
@@ -70,5 +77,4 @@ public class ColorableObject : MonoBehaviour
         _renderer.material.EnableKeyword("_Color");
         _renderer.material.SetColor("_Color", ShaderColorMultiplier);
 
-    }
 }
