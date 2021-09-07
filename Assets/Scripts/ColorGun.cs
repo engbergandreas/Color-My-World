@@ -20,11 +20,12 @@ public class ColorGun : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            color = Color.red;
+            ChangeColorGun(Color.red);
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            color = Color.green;
+            ChangeColorGun(Color.green);
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            color = Color.blue;
+            ChangeColorGun(Color.blue);
+
 
         if (fireTimer <= 0)
         {
@@ -53,5 +54,16 @@ public class ColorGun : MonoBehaviour
         Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
         hitTarget.GetComponent<ColorableObject>().ColorTarget(hitPoint, color, _cam);
 
+    }
+
+    private void ChangeColorGun(Color newColor)
+    {
+        color = newColor;
+        //TODO: broadcast onchanged to colorableobjects
+        var objs = FindObjectsOfType<ColorableObject>();
+        foreach(var obj in objs)
+        {
+            obj.OnChangedColorGun(newColor);
+        }
     }
 }

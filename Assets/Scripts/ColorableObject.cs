@@ -8,6 +8,8 @@ public class ColorableObject : MonoBehaviour
     private MeshRenderer meshRenderer;
     public Texture2D texture;
 
+    private Color ShaderColorMultiplier;
+
     public void ColorTarget(Vector3 hitPoint, Color color, Camera _cam)
     {
         Vector3 planeMin = _cam.WorldToScreenPoint(meshRenderer.bounds.min);
@@ -39,10 +41,34 @@ public class ColorableObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        float grayscale = 0.2f;
         meshRenderer = GetComponent<MeshRenderer>();
         texture = new Texture2D(size, size);
         texture.wrapMode = TextureWrapMode.Clamp;
-        GetComponent<Renderer>().material.mainTexture = texture;
+        for(int i =0; i < texture.width; i++)
+        {
+            for(int j = 0; j < texture.height; j++)
+            {
+                texture.SetPixel(i, j, new Color(grayscale, grayscale, grayscale));
+            }
+        }
+        texture.Apply();
+        
+        //GetComponent<Renderer>().material.mainTexture = texture;
+        Renderer _renderer = GetComponent<Renderer>();
+        _renderer.material.EnableKeyword("_PaintedTex");
+        _renderer.material.SetTexture("_PaintedTex", texture);
+
+    }
+
+
+    //TODO: find more optimal way to change all textures color in the shader
+    public void OnChangedColorGun(Color color)
+    {
+        ShaderColorMultiplier = color;
+        Renderer _renderer = GetComponent<Renderer>();
+        _renderer.material.EnableKeyword("_Color");
+        _renderer.material.SetColor("_Color", ShaderColorMultiplier);
 
     }
 }
