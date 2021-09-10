@@ -20,11 +20,11 @@ public class ColorGun : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            ChangeColorGun(Color.red);
+            ChangeColorGun(RGBChannel.Red);
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            ChangeColorGun(Color.green);
+            ChangeColorGun(RGBChannel.Green);
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            ChangeColorGun(Color.blue);
+            ChangeColorGun(RGBChannel.Blue);
 
 
         if (fireTimer <= 0)
@@ -52,18 +52,40 @@ public class ColorGun : MonoBehaviour
         }
         GameObject hitTarget = hitinfo.transform.gameObject;
         Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
-        hitTarget.GetComponent<ColorableObject>().ColorTarget(hitPoint, color, _cam);
+        //TODO: check correct obj
+        hitTarget.GetComponent<DrawableObject>().ColorTarget(hitPoint, color, _cam);
 
     }
 
-    private void ChangeColorGun(Color newColor)
+    //TODO: broadcast onchanged to other objects in a better way?
+    private void ChangeColorGun(RGBChannel channel)
     {
-        color = newColor;
-        //TODO: broadcast onchanged to colorableobjects
-        var objs = FindObjectsOfType<ColorableObject>();
-        foreach(var obj in objs)
+        color = RGBChannelToColor(channel);
+        var colorableObjects = FindObjectsOfType<ColorableObject>();
+        foreach(var obj in colorableObjects)
         {
-            obj.OnChangedColorGun(newColor);
+            obj.OnChangedColorGun(color);
+        }
+
+        var channelCollisions= FindObjectsOfType<ChannelCollision>();
+        foreach(var obj in channelCollisions)
+        {
+            obj.OnChannelChange(channel);
+        }
+    }
+
+    private Color RGBChannelToColor(RGBChannel channel)
+    {
+        switch (channel)
+        {
+            case RGBChannel.Red:
+                return Color.red;
+            case RGBChannel.Green:
+                return Color.green;
+            case RGBChannel.Blue:
+                return Color.blue;
+            default:
+                return Color.black;
         }
     }
 }
