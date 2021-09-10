@@ -4,77 +4,64 @@ using UnityEngine;
 
 public class ColorableObject : MonoBehaviour
 {
-    private int size = 128;
-    private MeshRenderer meshRenderer;
-    public Texture2D texture;
+    public RGBChannel desiredColor;
+    public int pointsToGive = 10;
+    public bool showTrueColorOnCorrectChannel = false;
 
-    private Color ShaderColorMultiplier;
+    protected Color desiredColorasColor;  
+    protected bool canGivePoints = true;
+    protected Color ShaderColorMultiplier;
+    protected Renderer _renderer;
 
-    public void ColorTarget(Vector3 hitPoint, Color color, Camera _cam)
+    // Start is called before the first frame update
+    protected virtual void Start()
     {
-        Vector3 planeMin = _cam.WorldToScreenPoint(meshRenderer.bounds.min);
-        Vector3 planeMax = _cam.WorldToScreenPoint(meshRenderer.bounds.max);
+        switch (desiredColor)
+        {
+            case RGBChannel.Red:
+                desiredColorasColor = Color.red;
+                break;
+            case RGBChannel.Green:
+                desiredColorasColor = Color.green;
 
-        float xProportion = Mathf.InverseLerp(planeMin.x, planeMax.x, hitPoint.x);
-        float yProportion = Mathf.InverseLerp(planeMin.y, planeMax.y, hitPoint.y);
+                break;
+            case RGBChannel.Blue:
+                desiredColorasColor = Color.blue;
+                break;
+            default:
+                break;
+        }
 
-        int xPoint = Mathf.RoundToInt(xProportion * texture.width);
-        int yPoint = Mathf.RoundToInt(yProportion * texture.height);
+        //GetComponent<Renderer>().material.mainTexture = texture;
+        _renderer = GetComponent<Renderer>();
+        //Get all the materials on the obj
+        var materials = _renderer.materials;
+        foreach (var material in materials)
+        {
+            //Enable shader keywords so they can be changed later
+           material.EnableKeyword("_PaintedTex");
+           material.EnableKeyword("_Color");
 
-        ColorArea(xPoint, yPoint, color);
+           //material.SetTexture("_PaintedTex", drawableTexture);
+        }
+
     }
     
-    // Color an area around coordinate (x,y) with color 
-    private void ColorArea(int x, int y, Color color)
-    {
-        int r = 15;
-        for (int i = x - r; i < x + r; i++)
-        {
-            //values outside texture width 
-            if (i < 0 || i >= texture.width)
-                continue;
-
-            for (int j = y - r; j < y + r; j++)
-            {
-                if (j < 0 || j >= texture.height)
-                    continue;
-
-                Color currentColor = texture.GetPixel(i,j);
-                texture.SetPixel(i, j, Color.Lerp(currentColor, color, 0.5f));
-            }
-        }
-        texture.Apply();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        float grayscale = 0.2f;
-        meshRenderer = GetComponent<MeshRenderer>();
-        texture = new Texture2D(size, size);
-        texture.wrapMode = TextureWrapMode.Clamp;
-        for(int i =0; i < texture.width; i++)
-        {
-            for(int j = 0; j < texture.height; j++)
-            {
-                texture.SetPixel(i, j, new Color(grayscale, grayscale, grayscale));
-            }
-        }
-        texture.Apply();
-        
-        //GetComponent<Renderer>().material.mainTexture = texture;
-        Renderer _renderer = GetComponent<Renderer>();
-        _renderer.material.EnableKeyword("_PaintedTex");
-        _renderer.material.SetTexture("_PaintedTex", texture);
-
-    }
-
-
     //TODO: find more optimal way to change all textures color in the shader
     public void OnChangedColorGun(Color color)
     {
         ShaderColorMultiplier = color;
-        Renderer _renderer = GetComponent<Renderer>();
-        _renderer.material.EnableKeyword("_Color");
-        _renderer.material.SetColor("_Color", ShaderColorMultiplier);
+        //Renderer _renderer = GetComponent<Renderer>();
+        //_renderer.material.SetColor("_Color", ShaderColorMultiplier);
+        
+        var materials = _renderer.materials;
+        foreach (var material in materials)
+        {
+            if (color == desiredColorasColor && showTrueColorOnCorrectChannel)
+                material.SetColor("_Color", Color.white);
+            else 
+                material.SetColor("_Color", ShaderColorMultiplier);
+        }
 
+    }
 }
