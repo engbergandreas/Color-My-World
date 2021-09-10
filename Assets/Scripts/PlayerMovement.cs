@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
        
     }
 
+    //TODO: bug, infinte jump
     private bool IsGrounded()
     {
         return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x,
