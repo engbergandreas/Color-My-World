@@ -9,10 +9,9 @@ public class ColorableObject : MonoBehaviour
     public bool showTrueColorOnCorrectChannel = false;
 
     protected Color desiredColorasColor;  
-    protected bool canGivePoints = true;
     protected Color ShaderColorMultiplier;
     protected Renderer _renderer;
-
+    protected bool staticColor = false;
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -45,12 +44,22 @@ public class ColorableObject : MonoBehaviour
            //material.SetTexture("_PaintedTex", drawableTexture);
         }
 
+        ColorGun.Instance.colorChannelEvent.AddListener(OnChangedColorGun);
     }
-    
+
+    //private void OnDestroy()
+    //{
+    //    ColorGun.Instance.colorChannelEvent.RemoveListener(OnChangedColorGun);
+    //}
+
     //TODO: find more optimal way to change all textures color in the shader
     public void OnChangedColorGun(Color color)
     {
         ShaderColorMultiplier = color;
+
+        if (staticColor)
+            return;
+
         //Renderer _renderer = GetComponent<Renderer>();
         //_renderer.material.SetColor("_Color", ShaderColorMultiplier);
         
@@ -63,5 +72,24 @@ public class ColorableObject : MonoBehaviour
                 material.SetColor("_Color", ShaderColorMultiplier);
         }
 
+    }
+
+    protected void ShowTrueColor()
+    {
+        showTrueColorOnCorrectChannel = true;
+        var materials = _renderer.materials;
+        foreach (var material in materials)
+        {
+            material.SetColor("_Color", Color.white);
+        }
+    }
+    protected void ShowRGBColor()
+    {
+        showTrueColorOnCorrectChannel = false;
+        var materials = _renderer.materials;
+        foreach (var material in materials)
+        {
+            material.SetColor("_Color", ShaderColorMultiplier);
+        }
     }
 }

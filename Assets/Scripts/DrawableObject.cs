@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class DrawableObject : ColorableObject
 {
     public Texture2D drawableTexture;
@@ -12,8 +12,13 @@ public class DrawableObject : ColorableObject
     [Range(0, 1)]
     public float threshold = 0.70f;
 
+    /// <summary>
+    /// Should this object fire any events when completely drawn
+    /// </summary>
+    public UnityEvent _event; 
 
-    private int size = 128;
+    protected bool canGivePoints = true;
+    private int textureSize = 64;
     private MeshRenderer meshRenderer;
 
 
@@ -23,7 +28,7 @@ public class DrawableObject : ColorableObject
         //Setup drawable texture properties
         float grayscale = 0.2f;
         meshRenderer = GetComponent<MeshRenderer>();
-        drawableTexture = new Texture2D(size, size);
+        drawableTexture = new Texture2D(textureSize, textureSize);
         drawableTexture.wrapMode = TextureWrapMode.Clamp;
 
         //Set all pixels to grayscale value
@@ -63,12 +68,33 @@ public class DrawableObject : ColorableObject
         int yPoint = Mathf.RoundToInt(yProportion * drawableTexture.height);
 
         ColorArea(xPoint, yPoint, color);
-        Debug.Log(CalculateColorFraction());
-        if (canGivePoints && CalculateColorFraction() >= threshold)
+        //Debug.Log(CalculateColorFraction());
+        if (CalculateColorFraction() >= threshold) //very inefficient to calculate fraction every time we shoot at target
+        {
+            FullyColored();
+        }
+        else
+        {
+            OnPartiallyColored();
+        }
+    }
+    /// <summary>
+    /// What happens when the obj has been fully colored 
+    /// </summary>
+    protected virtual void FullyColored()
+    {
+        if (canGivePoints)
         {
             PointSystem.Instance.AddPoints(pointsToGive);
             canGivePoints = false;
+            ColorGun.Instance.colorChannelEvent.RemoveListener(OnChangedColorGun); //if it should stay the same color it is when accepted as correct
+
         }
+        _event.Invoke();
+    }
+    protected virtual void OnPartiallyColored()
+    {
+
     }
 
     /// <summary>
@@ -116,6 +142,12 @@ public class DrawableObject : ColorableObject
             }
         }
         return (float)correctPixels / pixels.Length;
+    }
+
+    public void ResetToOriginal()
+    {
+        //TODO add reset obj to original state
+        Debug.Log("TODO:");
     }
 }
 
