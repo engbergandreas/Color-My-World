@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO: Subclass of colorable object? -> direct access to desired color 
+//TODO: Subclass of colorable object? -> direct access to desired color instead of having its own
+//TODO: visualize when its possible to walk through or not
+
 public class ChannelCollision : MonoBehaviour
 {
     public RGBChannel canWalkThroughInChannel;
@@ -12,9 +14,10 @@ public class ChannelCollision : MonoBehaviour
     private void Start()
     {
         col = GetComponent<BoxCollider>();
+        ColorGun.Instance.rgbChannelEvent.AddListener(OnChannelChange);
     }
 
-    public void OnChannelChange(RGBChannel newChannel)
+    private void OnChannelChange(RGBChannel newChannel)
     {
         if(newChannel == canWalkThroughInChannel)
         {
@@ -24,6 +27,4 @@ public class ChannelCollision : MonoBehaviour
             col.isTrigger = false;
         }
     }
-
-
 }
