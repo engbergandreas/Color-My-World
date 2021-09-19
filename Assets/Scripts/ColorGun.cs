@@ -1,15 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class ColorGun : MonoBehaviour
 {
+    public static ColorGun Instance;
     public Color color;
     public float fireRate = 10.0f;
     public bool continiousFire;
 
+    public UnityEvent<RGBChannel> rgbChannelEvent;
+    public UnityEvent<Color> colorChannelEvent;
+
     private Camera _cam;
     private float fireTimer;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -39,7 +48,7 @@ public class ColorGun : MonoBehaviour
             fireTimer -= Time.deltaTime;
         }
     }
-
+    //TODO fire from player to mouse 
     public void FireGun()
     {
         fireTimer = 1 / fireRate;
@@ -50,28 +59,35 @@ public class ColorGun : MonoBehaviour
         {
             return;
         }
+        //Check we drawable target
         GameObject hitTarget = hitinfo.transform.gameObject;
-        Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
-        //TODO: check correct obj
-        hitTarget.GetComponent<DrawableObject>().ColorTarget(hitPoint, color, _cam);
-
+        DrawableObject objectHit = hitTarget.GetComponent<DrawableObject>();
+        if (objectHit)
+        {
+            Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
+            objectHit.ColorTarget(hitPoint, color, _cam);
+        }
     }
 
     //TODO: broadcast onchanged to other objects in a better way?
+    //UnityEvent<RGBChannel> <Color>
     private void ChangeColorGun(RGBChannel channel)
     {
         color = RGBChannelToColor(channel);
-        var colorableObjects = FindObjectsOfType<ColorableObject>();
-        foreach(var obj in colorableObjects)
-        {
-            obj.OnChangedColorGun(color);
-        }
+        //var colorableObjects = FindObjectsOfType<ColorableObject>();
+        //foreach(var obj in colorableObjects)
+        //{
+        //    obj.OnChangedColorGun(color);
+        //}
 
-        var channelCollisions= FindObjectsOfType<ChannelCollision>();
-        foreach(var obj in channelCollisions)
-        {
-            obj.OnChannelChange(channel);
-        }
+        //var channelCollisions= FindObjectsOfType<ChannelCollision>();
+        //foreach(var obj in channelCollisions)
+        //{
+        //    obj.OnChannelChange(channel);
+        //}
+
+        rgbChannelEvent.Invoke(channel);
+        colorChannelEvent.Invoke(color);
     }
 
     private Color RGBChannelToColor(RGBChannel channel)
