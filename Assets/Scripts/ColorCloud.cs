@@ -9,26 +9,38 @@ public class ColorCloud : DrawableObject
     [Range(min, max)]
     public float lifeTime = 15.0f;
 
-    private float endTime, t;
+    private float elapsedTime, t;
     Vector3 startvalue;
 
-    private bool isShrinking = true;
+    private bool isShrinking = false;
+
+    private void Awake()
+    {
+        gameObject.SetActive(false);
+    }
 
 
     protected override void Start()
     {
         base.Start();
-        endTime = Time.timeSinceLevelLoad + lifeTime;
+        elapsedTime = 0.0f;
         startvalue = transform.localScale;
-        t = 0;
+        isShrinking = true;
     }
 
     private void Update()
     {
         if (isShrinking)
         {
-            t = Time.timeSinceLevelLoad / endTime;
+            t = elapsedTime / lifeTime;
             transform.localScale = Vector3.Lerp(startvalue, Vector3.zero, t);
+            elapsedTime += Time.deltaTime;
+
+            if (elapsedTime >= lifeTime)
+            {
+                isShrinking = false;
+                Destroy(gameObject, 5);
+            }
         }
     }
 
@@ -41,7 +53,7 @@ public class ColorCloud : DrawableObject
             PointSystem.Instance.AddPoints(points);
             canGivePoints = false;
             isShrinking = false;
-            Destroy(gameObject, 5);
+            //Destroy(gameObject, 5);
         }
     }
 }
