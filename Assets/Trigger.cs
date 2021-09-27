@@ -10,7 +10,10 @@ public class Trigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        onTriggered.Invoke();
-        onTriggeredVector.Invoke(transform.position);
+        if (other.name == "Player")
+        {
+            onTriggered.Invoke();
+            onTriggeredVector.Invoke(transform.position);
+        }
     }
 }
