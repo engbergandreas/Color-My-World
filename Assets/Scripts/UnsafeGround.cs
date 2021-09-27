@@ -40,7 +40,7 @@ public class UnsafeGround : MonoBehaviour
 
     void Fall()
     {
-        transform.Translate(Vector3.down * 5);
+        transform.Translate(Vector3.down * 50);
         OnGroundFallen();
     }
 
