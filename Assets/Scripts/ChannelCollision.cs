@@ -9,6 +9,8 @@ public class ChannelCollision : MonoBehaviour
 {
     public RGBChannel canWalkThroughInChannel;
 
+    public bool solidInChannel = false;
+
     private BoxCollider col;
 
     private void Start()
@@ -19,12 +21,18 @@ public class ChannelCollision : MonoBehaviour
 
     private void OnChannelChange(RGBChannel newChannel)
     {
-        if(newChannel == canWalkThroughInChannel)
-        {
-            col.isTrigger = true;
-        }else
-        {
-            col.isTrigger = false;
-        }
+        col.isTrigger = (newChannel == canWalkThroughInChannel); //true if player is in the same channel as obj otherwise false
+
+        //if we are supposed to be solid in the correct channel switch the trigger to off instead
+        if (solidInChannel)
+            col.isTrigger = !col.isTrigger;
+
+        //if(newChannel == canWalkThroughInChannel)
+        //{
+        //    col.isTrigger = true;
+        //}else
+        //{
+        //    col.isTrigger = false;
+        //}
     }
 }
