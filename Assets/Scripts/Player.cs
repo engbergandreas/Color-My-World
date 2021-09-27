@@ -15,15 +15,22 @@ public class Player : MonoBehaviour
 {
     public static Player Instance;
     public RGBChannel playerChannel;
-    
+
+    private Vector3 respawnPoint;
+
     void Awake()
     {
         Instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetSpawnPoint(Vector3 point)
     {
-        
+        respawnPoint = point;
+    }
+
+    public void Kill()
+    {
+        transform.position = respawnPoint;
+        Debug.Log("TODO: Remove life");
     }
 }
