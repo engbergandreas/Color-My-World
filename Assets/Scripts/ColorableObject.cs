@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Objects that should shift color on channel change
+/// </summary>
 public class ColorableObject : MonoBehaviour
 {
     public RGBChannel desiredColor;
