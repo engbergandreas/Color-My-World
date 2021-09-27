@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        respawnPoint = GameObject.Find("SpawnPoint").transform.position;
     }
 
     public void SetSpawnPoint(Vector3 point)
@@ -31,6 +32,8 @@ public class Player : MonoBehaviour
     public void Kill()
     {
         transform.position = respawnPoint;
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         Debug.Log("TODO: Remove life");
     }
 }
