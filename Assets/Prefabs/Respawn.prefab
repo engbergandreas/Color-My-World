@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 211122497861061405}
   m_Layer: 0
-  m_Name: 20facestar
+  m_Name: Respawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f93e102464db9a45878224c9dbfd1db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunColor: 0
   onTriggered:
     m_PersistentCalls:
       m_Calls: []
@@ -157,3 +158,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onTriggerChannel:
+    m_PersistentCalls:
+      m_Calls: []
