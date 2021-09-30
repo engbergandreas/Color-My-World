@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 public class ColorGun : MonoBehaviour
 {
     public static ColorGun Instance;
     public Color color;
     public float fireRate = 10.0f;
     public bool continiousFire;
+    public Image crosshair;
+    public Transform fireGunPosition;
 
     public UnityEvent<RGBChannel> rgbChannelEvent;
     public UnityEvent<Color> colorChannelEvent;
@@ -24,6 +27,7 @@ public class ColorGun : MonoBehaviour
     {
         _cam = Camera.main;
         fireTimer = 0;
+        Cursor.visible = false; //make cursor pointer invisible
     }
     // Update is called once per frame
     void Update()
@@ -47,9 +51,40 @@ public class ColorGun : MonoBehaviour
         {
             fireTimer -= Time.deltaTime;
         }
+
+        RectTransform crosshairRec = crosshair.GetComponent<RectTransform>();
+        Vector3 screenMousePos = Input.mousePosition;
+        crosshairRec.position = screenMousePos;
+
+        CheckIntersectingObjectsBetweenPlayerAndMouse();
     }
-    //TODO fire from player to mouse 
-    public void FireGun()
+    /// <summary>
+    /// Raycast from the player towards the mouse to se if we intercept any drawable objects
+    /// Crosshair alpha value set to 1 if we are hovering a drawable object, otherwise lower value.
+    /// </summary>
+    private void CheckIntersectingObjectsBetweenPlayerAndMouse()
+    {
+        crosshair.color = new Color(0, 0, 0, 0.2f);
+
+        if (!Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out RaycastHit rayMouseToWorld))
+            return;
+        Vector3 hitPoint = rayMouseToWorld.point;
+        Vector3 dir = hitPoint - fireGunPosition.position;
+
+        if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit rayPlayerToMouse, dir.magnitude))
+            return;
+
+       var interceptedObj = rayPlayerToMouse.transform.GetComponent<DrawableObject>();
+        if(interceptedObj)
+        {
+            crosshair.color = new Color(0, 0, 0, 1);
+        }
+    }
+
+    /// <summary>
+    /// Fires gun from player to mouse location 
+    /// </summary>
+    private void FireGun()
     {
         fireTimer = 1 / fireRate;
 
@@ -59,13 +94,24 @@ public class ColorGun : MonoBehaviour
         {
             return;
         }
-        //Check we drawable target
+        //Check we hit drawable target
         GameObject hitTarget = hitinfo.transform.gameObject;
         DrawableObject objectHit = hitTarget.GetComponent<DrawableObject>();
         if (objectHit)
         {
-            Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
-            objectHit.ColorTarget(hitPoint, color, _cam);
+            //Fire a ray from the player towards the mouse in world coordinates
+            //check if the ray intersects any other objects on the path
+            Vector3 worldHitPoint = hitinfo.point;
+            Vector3 dir = worldHitPoint - fireGunPosition.position;
+            if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit info, dir.magnitude))
+                return;
+
+            DrawableObject interception = info.transform.gameObject.GetComponent<DrawableObject>();
+            if (interception && interception == objectHit) //Is it the same drawable object that we clicked on then fire the gun
+            {
+                Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
+                objectHit.ColorTarget(hitPoint, color, _cam);
+            }
         }
     }
 
