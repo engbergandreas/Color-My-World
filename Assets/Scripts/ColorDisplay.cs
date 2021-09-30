@@ -8,17 +8,25 @@ public class ColorDisplay : MonoBehaviour
     public RectTransform container;
 
 
-    public List<Color> pickedUpColors = new List<Color> { Color.red, Color.green, Color.blue }; //TODO change to actual picked up colors
+    private List<Color> pickedUpColors = new List<Color> { Color.red, Color.green, Color.blue }; //TODO change to actual picked up colors
     private List<Image> uiColors = new List<Image>(); //internal list of created ui colors
     private int colorSpacing = 10;
+    private int colorCounter = 0;
     // Start is called before the first frame update
     void Start()
     {
-        for(int i =0; i < pickedUpColors.Count; i++)
-        {
-            CreateColorTransform(imgprefab, container,pickedUpColors[i], i);
-        }
+        //for(int i =0; i < pickedUpColors.Count; i++)
+        //{
+        //    CreateColorTransform(imgprefab, container,pickedUpColors[i], i);
+        //}
         ColorGun.Instance.rgbChannelEvent.AddListener(OnChangedColor);
+    }
+
+    public void AddColorToUI(RGBChannel channel)
+    {
+        Color c = ColorGun.Instance.RGBChannelToColor(channel);
+        CreateColorTransform(imgprefab, container, c, colorCounter);
+        colorCounter++;
     }
 
     private void CreateColorTransform(Image prefab, RectTransform _container, Color _color, int index)

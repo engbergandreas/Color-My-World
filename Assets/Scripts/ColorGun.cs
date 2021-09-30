@@ -18,6 +18,8 @@ public class ColorGun : MonoBehaviour
     private Camera _cam;
     private float fireTimer;
 
+    private bool hasRed = false, hasGreen = false, hasBlue = false;
+
     private void Awake()
     {
         Instance = this;
@@ -32,11 +34,11 @@ public class ColorGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (hasRed && Input.GetKeyDown(KeyCode.Alpha1))
             ChangeColorGun(RGBChannel.Red);
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (hasGreen && Input.GetKeyDown(KeyCode.Alpha2))
             ChangeColorGun(RGBChannel.Green);
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (hasBlue && Input.GetKeyDown(KeyCode.Alpha3))
             ChangeColorGun(RGBChannel.Blue);
 
 
@@ -136,7 +138,7 @@ public class ColorGun : MonoBehaviour
         colorChannelEvent.Invoke(color);
     }
 
-    private Color RGBChannelToColor(RGBChannel channel)
+    public Color RGBChannelToColor(RGBChannel channel)
     {
         switch (channel)
         {
@@ -148,6 +150,24 @@ public class ColorGun : MonoBehaviour
                 return Color.blue;
             default:
                 return Color.black;
+        }
+    }
+  
+    public void PickUpColor(RGBChannel color)
+    {
+        switch (color)
+        {
+            case RGBChannel.Red:
+                hasRed = true;
+                break;
+            case RGBChannel.Green:
+                hasGreen = true;
+                break;
+            case RGBChannel.Blue:
+                hasBlue = true;
+                break;
+            default:
+                break;
         }
     }
 }
