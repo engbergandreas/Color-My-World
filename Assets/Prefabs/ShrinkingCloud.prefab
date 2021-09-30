@@ -108,6 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f93e102464db9a45878224c9dbfd1db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunColor: 0
   onTriggered:
     m_PersistentCalls:
       m_Calls:
@@ -124,6 +125,9 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   onTriggeredVector:
+    m_PersistentCalls:
+      m_Calls: []
+  onTriggerChannel:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &4884279193814318408
@@ -220,7 +224,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &4884279193814318409
