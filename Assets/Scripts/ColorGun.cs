@@ -73,10 +73,11 @@ public class ColorGun : MonoBehaviour
         Vector3 hitPoint = rayMouseToWorld.point;
         Vector3 dir = hitPoint - fireGunPosition.position;
 
-        if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit rayPlayerToMouse, dir.magnitude))
-            return;
 
-       var interceptedObj = rayPlayerToMouse.transform.GetComponent<DrawableObject>();
+        if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit rayPlayerToMouse))
+            return;
+        
+        var interceptedObj = rayPlayerToMouse.transform.GetComponent<DrawableObject>();
         if(interceptedObj)
         {
             crosshair.color = new Color(0, 0, 0, 1);
@@ -105,7 +106,7 @@ public class ColorGun : MonoBehaviour
             //check if the ray intersects any other objects on the path
             Vector3 worldHitPoint = hitinfo.point;
             Vector3 dir = worldHitPoint - fireGunPosition.position;
-            if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit info, dir.magnitude))
+            if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit info))
                 return;
 
             DrawableObject interception = info.transform.gameObject.GetComponent<DrawableObject>();
