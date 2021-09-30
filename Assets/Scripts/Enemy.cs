@@ -6,9 +6,13 @@ public class Enemy : DrawableObject
 {
     public Transform[] patrolPoints;
     public float SearchRadius = 5.0f;
+
+    
+
+
     private NavMeshAgent agent;
     private int destPoint;
-
+    private bool isHunting = false;
 
     protected override void Start()
     {
@@ -45,6 +49,15 @@ public class Enemy : DrawableObject
         if (playerDistance <= SearchRadius)
         {
             agent.destination = Player.Instance.transform.position;
+            isHunting = true;
+        }
+        else
+        {
+            if(isHunting)
+            {
+                GoToNextPatrolPoint();
+                isHunting = false;
+            }
         }
 
         
