@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private CapsuleCollider col;
 
     private Rigidbody rb;
+    private bool onLadder = false;
 
 
     Vector3 movementdir;
@@ -20,9 +21,24 @@ public class PlayerMovement : MonoBehaviour
         col = GetComponent<CapsuleCollider>();
     }
 
+    public void OnEnterLadder()
+    {
+        onLadder = true;
+        rb.useGravity = false;
+    }
+    public void OnExitLadder()
+    {
+        onLadder = false;
+        rb.useGravity = true;
+    }
+
     private void FixedUpdate()
     {
         rb.velocity = new Vector3(movementdir.x * movementSpeed * Time.deltaTime, rb.velocity.y, rb.velocity.z);
+        if(onLadder)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, movementdir.y * movementSpeed * Time.deltaTime, rb.velocity.z);
+        }
     }
     //TODO: better movement controls
     void Update()
