@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 public class ColorDisplay : MonoBehaviour
 {
     public Image imgprefab;
@@ -39,6 +41,8 @@ public class ColorDisplay : MonoBehaviour
         _color.a = 0.5f; //set alpha to 0.5
         obj.color = _color;
 
+        int nr = index + 1;
+        obj.GetComponentInChildren<TextMeshProUGUI>().SetText(nr.ToString());
         uiColors.Add(obj);
     }
 
