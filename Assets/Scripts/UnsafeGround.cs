@@ -5,6 +5,8 @@ using UnityEngine;
 public class UnsafeGround : MonoBehaviour
 {
     public float lifeTime;
+    [Range(1.0f, 3.0f)]
+    public float reductionScalar = 1.0f;
     
     private Vector3 ogPosition, ogScale;
     private Quaternion ogRotation;
@@ -31,7 +33,7 @@ public class UnsafeGround : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        timeLeft -= Time.deltaTime;
+        timeLeft -= Time.deltaTime * reductionScalar;
         if (timeLeft <= 0)
         {
             Fall();
