@@ -31,10 +31,10 @@ public class ColorDisplay : MonoBehaviour
 
     private void CreateColorTransform(Image prefab, RectTransform _container, Color _color, int index)
     {
-        int prefabWidth = 50;
         Image obj = Instantiate(prefab, _container);
         RectTransform objRecTransform = obj.GetComponent<RectTransform>();
-        objRecTransform.anchoredPosition = new Vector2(10+25 + colorSpacing * index + prefabWidth * index, 0);
+        float prefabWidth = objRecTransform.rect.width;
+        objRecTransform.anchoredPosition = new Vector2(10 + prefabWidth / 2 + colorSpacing * index + prefabWidth * index, 0);
 
         _color.a = 0.5f; //set alpha to 0.5
         obj.color = _color;
