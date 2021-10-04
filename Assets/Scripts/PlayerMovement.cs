@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private bool onLadder = false;
 
+    private int layerMask;
+
 
     Vector3 movementdir;
 
@@ -19,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
+        layerMask = ~LayerMask.GetMask("Player");
+
     }
 
     public void OnEnterLadder()
@@ -56,8 +60,6 @@ public class PlayerMovement : MonoBehaviour
     //TODO: bug, infinte jump
     private bool IsGrounded()
     {
-        return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x,
-            col.bounds.min.y, col.bounds.center.z), col.radius * 1.05f);
-       
+        return Physics.CheckSphere(new Vector3(col.bounds.center.x, col.bounds.min.y, col.bounds.center.z), col.radius * 1.05f, layerMask);      
     }
 }
