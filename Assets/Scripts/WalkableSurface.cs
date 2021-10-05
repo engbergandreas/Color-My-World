@@ -19,6 +19,7 @@ public class WalkableSurface : DrawableObject
         col.isTrigger = false;
         staticColor = true;
         ShowTrueColor();
+        _event.Invoke();
 
     }
 

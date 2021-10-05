@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Audio;
+
 public class DoorButton : MonoBehaviour
 {
 
@@ -11,6 +13,10 @@ public class DoorButton : MonoBehaviour
 
     public DrawableObject button;
 
+    private AudioSource audioSource;
+    public AudioMixer audioMixer;
+    
+
     private bool open = false;
     private float timer = 0;
     private BoxCollider doorcollider;
@@ -18,11 +24,16 @@ public class DoorButton : MonoBehaviour
     {
         doorcollider = door.GetComponent<BoxCollider>();
         button._event.AddListener(OnFullyColoredButton);
+        audioSource = GetComponent<AudioSource>();
     }
     public void OnFullyColoredButton()
     {
+        if (open)
+            return; 
+
         WalkThrough(true);
         timer = timeUntilClosed;
+        audioSource.Play();
     }
 
     private void Update()
@@ -30,12 +41,24 @@ public class DoorButton : MonoBehaviour
         if(open)
         {
             timer -= Time.deltaTime;
+            float pitchMixerRatio = 1.0f - ((timer - (timeUntilClosed / 3.0f)) / timeUntilClosed);
+            pitchMixerRatio = Mathf.Clamp(pitchMixerRatio, 0.4f, 1.1f);
+            audioSource.pitch = pitchMixerRatio;
+            audioMixer.SetFloat("MixerPitch", 1.0f / pitchMixerRatio);
+            
+
             if (timer <= 0)
             {
-                WalkThrough(false);
-                button.ResetToOriginal();
+                CloseDoor();
             }
         }
+    }
+
+    public void CloseDoor()
+    {
+        WalkThrough(false);
+        button.ResetToOriginal();
+        audioSource.Stop();
     }
 
 
