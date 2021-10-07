@@ -38,7 +38,7 @@ public class ColorDisplay : MonoBehaviour
         float prefabWidth = objRecTransform.rect.width;
         objRecTransform.anchoredPosition = new Vector2(10 + prefabWidth / 2 + colorSpacing * index + prefabWidth * index, 0);
 
-        _color.a = 0.5f; //set alpha to 0.5
+        _color.a = 0.2f; //set alpha to 0.5
         obj.color = _color;
 
         int nr = index + 1;
