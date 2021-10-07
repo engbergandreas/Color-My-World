@@ -6,7 +6,7 @@ public class Ladder : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if(other.name == "Player")
+        if (other.tag == "Player")
         {
             other.GetComponent<PlayerMovement>().OnEnterLadder();
         }
@@ -14,7 +14,7 @@ public class Ladder : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.name == "Player")
+        if (other.tag == "Player")
         {
             other.GetComponent<PlayerMovement>().OnExitLadder();
         }
