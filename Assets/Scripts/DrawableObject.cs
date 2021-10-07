@@ -36,7 +36,9 @@ public class DrawableObject : ColorableObject
         {
             for (int j = 0; j < drawableTexture.height; j++)
             {
-                drawableTexture.SetPixel(i, j, new Color(grayscale, grayscale, grayscale));
+                Color c = ColorGun.Instance.RGBChannelToColor(desiredColor);
+                c *= 0.2f;
+                drawableTexture.SetPixel(i, j, c);
             }
         }
         drawableTexture.Apply();
@@ -57,7 +59,6 @@ public class DrawableObject : ColorableObject
     /// <param name="_cam"></param>
     public void ColorTarget(Vector3 hitPoint, Color color, Camera _cam)
     {
-        
         Vector3 planeMin = _cam.WorldToScreenPoint(meshRenderer.bounds.min);
         Vector3 planeMax = _cam.WorldToScreenPoint(meshRenderer.bounds.max);
 

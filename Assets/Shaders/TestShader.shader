@@ -47,8 +47,8 @@ Shader "Custom/TestShader"
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			fixed4 color2 = tex2D(_PaintedTex, IN.uv_PaintedTex);
-            //o.Albedo = c.rgb * (1 - _Mix) + color2 * _Mix; //mix the colors ( also gives red blue and green in the other colors
-			o.Albedo = c.rgb * color2;
+            o.Albedo = c.rgb * (1 - _Mix) + color2 * _Mix; //mix the colors ( also gives red blue and green in the other colors
+			//o.Albedo = c.rgb * color2;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

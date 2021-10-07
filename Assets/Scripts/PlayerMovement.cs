@@ -14,6 +14,9 @@ public class PlayerMovement : MonoBehaviour
 
     private int layerMask;
 
+    private Actions playerActions;
+    private bool isRunning;
+
 
     Vector3 movementdir;
 
@@ -21,6 +24,12 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
+        playerActions = GetComponent<Actions>();
+
+        if (!rb)
+            rb = GetComponentInChildren<Rigidbody>();
+        if (!col)
+            col = GetComponentInChildren<CapsuleCollider>();
         layerMask = ~LayerMask.GetMask("Player");
 
     }
@@ -42,19 +51,45 @@ public class PlayerMovement : MonoBehaviour
         if(onLadder)
         {
             rb.velocity = new Vector3(rb.velocity.x, movementdir.y * movementSpeed * Time.deltaTime, rb.velocity.z);
+
         }
     }
     //TODO: better movement controls
     void Update()
     {
         movementdir = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+        Vector3 rot;
+        if (!onLadder)
+        {
+            rot = new Vector3(0, 180 - movementdir.x * 90, 0);
+        }else
+        {
+            rot = new Vector3(0, 0, 0);
+        }
+        transform.eulerAngles = rot;
+
+        if (Mathf.Abs(movementdir.x) > 0)
+            Run();
+        else {
+            playerActions.Stay();
+            isRunning = false;  
+        }
 
         if (IsGrounded() && Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(Vector3.up * jumpStrength, ForceMode.Impulse);
+            playerActions.Jump();
+            isRunning = false;
         }
+    }
 
-       
+    private void Run()
+    {
+        if (!isRunning)
+        {
+            isRunning = true;
+            playerActions.Run();
+        }
     }
 
     //TODO: bug, infinte jump

@@ -307,10 +307,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea68277bfc0cc3941a42644b1b4496d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeUntilClosed: 15
+  timeUntilClosed: 10
   door: {fileID: 1540732447269195249}
   button: {fileID: 4523493598487624658}
   audioMixer: {fileID: 24100000, guid: a1bc3de2ba6411845b3a4f7c06522c4f, type: 2}
+  gateToOpen: {fileID: 1625156644293669116}
 --- !u!82 &7982461986663823925
 AudioSource:
   m_ObjectHideFlags: 0
@@ -672,6 +673,11 @@ GameObject:
 --- !u!4 &2173575419701647179 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d1abb492aef9d34439cb98fcc8d18e31, type: 3}
+  m_PrefabInstance: {fileID: 1846667361984917664}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1625156644293669116 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1093558274924888156, guid: d1abb492aef9d34439cb98fcc8d18e31, type: 3}
   m_PrefabInstance: {fileID: 1846667361984917664}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6265175166272297265
