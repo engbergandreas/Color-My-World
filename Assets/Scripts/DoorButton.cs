@@ -15,8 +15,8 @@ public class DoorButton : MonoBehaviour
 
     private AudioSource audioSource;
     public AudioMixer audioMixer;
-    
 
+    public Transform gateToOpen;
     private bool open = false;
     private float timer = 0;
     private BoxCollider doorcollider;
@@ -31,9 +31,15 @@ public class DoorButton : MonoBehaviour
         if (open)
             return; 
 
+   
+    }
+
+    private void OpenDoor()
+    {
         WalkThrough(true);
         timer = timeUntilClosed;
         audioSource.Play();
+        gateToOpen.eulerAngles = new Vector3(0, -40, 0);
     }
 
     private void Update()
@@ -59,6 +65,7 @@ public class DoorButton : MonoBehaviour
         WalkThrough(false);
         button.ResetToOriginal();
         audioSource.Stop();
+        gateToOpen.eulerAngles = new Vector3(0, 0, 0);
     }
 
 
