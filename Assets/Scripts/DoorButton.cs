@@ -29,8 +29,9 @@ public class DoorButton : MonoBehaviour
     public void OnFullyColoredButton()
     {
         if (open)
-            return; 
+            return;
 
+        OpenDoor();
    
     }
 
