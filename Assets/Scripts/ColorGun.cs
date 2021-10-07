@@ -67,6 +67,7 @@ public class ColorGun : MonoBehaviour
     private void CheckIntersectingObjectsBetweenPlayerAndMouse()
     {
         crosshair.color = new Color(0, 0, 0, 0.2f);
+        crosshair.rectTransform.eulerAngles = new Vector3(0, 0, 0);
 
         if (!Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out RaycastHit rayMouseToWorld))
             return;
@@ -81,6 +82,9 @@ public class ColorGun : MonoBehaviour
         if(interceptedObj)
         {
             crosshair.color = new Color(0, 0, 0, 1);
+            float deg = 60.0f;
+            float speed = 6.0f;
+            crosshair.rectTransform.eulerAngles = new Vector3(0, 0, Mathf.Sin(Time.time * speed) * deg );
         }
     }
 
