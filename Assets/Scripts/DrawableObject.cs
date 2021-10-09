@@ -57,7 +57,7 @@ public class DrawableObject : ColorableObject
     /// <param name="hitPoint"></param>
     /// <param name="color"></param>
     /// <param name="_cam"></param>
-    public void ColorTarget(Vector3 hitPoint, Color color, Camera _cam)
+    public void ColorTarget(Vector3 hitPoint, Color color, Camera _cam, Texture2D mask)
     {
         Vector3 planeMin = _cam.WorldToScreenPoint(meshRenderer.bounds.min);
         Vector3 planeMax = _cam.WorldToScreenPoint(meshRenderer.bounds.max);
@@ -68,7 +68,7 @@ public class DrawableObject : ColorableObject
         int xPoint = Mathf.RoundToInt(xProportion * drawableTexture.width);
         int yPoint = Mathf.RoundToInt(yProportion * drawableTexture.height);
 
-        ColorArea(xPoint, yPoint, color);
+        ColorArea(xPoint, yPoint, color, mask);
         //Debug.Log(CalculateColorFraction());
         if (CalculateColorFraction() >= threshold) //very inefficient to calculate fraction every time we shoot at target
         {
@@ -104,7 +104,7 @@ public class DrawableObject : ColorableObject
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    private void ColorArea(int x, int y, Color color)
+    private void ColorArea(int x, int y, Color color, Texture2D mask)
     {
         int r = 15;
         for (int i = x - r; i < x + r; i++)
@@ -119,8 +119,16 @@ public class DrawableObject : ColorableObject
                 if (j < 0 || j >= drawableTexture.height)
                     continue;
 
+                int u = (int) Mathf.Floor(((float)i - (x - r)) / (2 * r) * mask.width);
+                int v = (int) Mathf.Floor(((float)j - (y - r)) / (2 * r) * mask.height);
+                
+
+                float maskColor = 1 - mask.GetPixel(u, v).r;
+                if (maskColor < 0.2)
+                    continue;
+
                 Color currentColor = drawableTexture.GetPixel(i, j);
-                drawableTexture.SetPixel(i, j, Color.Lerp(currentColor, color, 0.5f));
+                drawableTexture.SetPixel(i, j, Color.Lerp(currentColor, color, 0.5f) * maskColor);
             }
         }
         drawableTexture.Apply();

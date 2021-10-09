@@ -11,12 +11,14 @@ public class ColorGun : MonoBehaviour
     public bool continiousFire;
     public Image crosshair;
     public Transform fireGunPosition;
-
+    public List<Texture2D> maskList;
     public UnityEvent<RGBChannel> rgbChannelEvent;
     public UnityEvent<Color> colorChannelEvent;
 
     private Camera _cam;
     private float fireTimer;
+
+    //private LineRenderer lr;
 
     private bool hasRed = false, hasGreen = false, hasBlue = false;
 
@@ -30,6 +32,9 @@ public class ColorGun : MonoBehaviour
         _cam = Camera.main;
         fireTimer = 0;
         Cursor.visible = false; //make cursor pointer invisible
+        //lr = GetComponent<LineRenderer>();
+        //lr.startWidth = 0.3f;
+        //lr.endWidth = 0.3f;
     }
     // Update is called once per frame
     void Update()
@@ -69,11 +74,19 @@ public class ColorGun : MonoBehaviour
         crosshair.color = new Color(0, 0, 0, 0.2f);
         crosshair.rectTransform.eulerAngles = new Vector3(0, 0, 0);
 
+
+        //lr.SetPosition(0, Vector3.zero);
+        //lr.SetPosition(1, Vector3.zero);
+        //lr.startColor = Color.black;
+        //lr.endColor = Color.black;
+
         if (!Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out RaycastHit rayMouseToWorld))
             return;
         Vector3 hitPoint = rayMouseToWorld.point;
         Vector3 dir = hitPoint - fireGunPosition.position;
 
+        //lr.SetPosition(0, fireGunPosition.position);
+        //lr.SetPosition(1, hitPoint);
 
         if (!Physics.Raycast(fireGunPosition.position, dir.normalized, out RaycastHit rayPlayerToMouse))
             return;
@@ -85,6 +98,8 @@ public class ColorGun : MonoBehaviour
             float deg = 60.0f;
             float speed = 6.0f;
             crosshair.rectTransform.eulerAngles = new Vector3(0, 0, Mathf.Sin(Time.time * speed) * deg );
+            //lr.startColor = Color.blue;
+            //lr.endColor = Color.blue;
         }
     }
 
@@ -117,9 +132,15 @@ public class ColorGun : MonoBehaviour
             if (interception && interception == objectHit) //Is it the same drawable object that we clicked on then fire the gun
             {
                 Vector3 hitPoint = _cam.WorldToScreenPoint(hitinfo.point);
-                objectHit.ColorTarget(hitPoint, color, _cam);
+                objectHit.ColorTarget(hitPoint, color, _cam, GetRandomSplatterMask());
             }
         }
+    }
+
+    Texture2D GetRandomSplatterMask()
+    {
+        
+        return maskList[Random.Range(0, maskList.Count)];
     }
 
     //TODO: broadcast onchanged to other objects in a better way?
